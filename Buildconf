@@ -1,0 +1,60 @@
+; vim: set filetype=ini:
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Build configuration for SBS ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+;;
+;; PROGRAM INFORMATION (required)
+;;
+
+[info]
+;; program name
+name =    sbs
+;; version of the given application
+version = 0.1
+
+;;
+;; LIBRARIES
+;;
+[libraries]
+libraries = inih
+;;
+;; COMPILER INFORMATION
+;;
+
+[compiler]
+;; compiler (defaults to `cc`); results in <compiler> <sourcefile> -o <output-file> <ccargs-rel/ccargs-dbg>
+compiler = gcc
+
+;; arguments passed to the compiler (defaults to `-c`, which is always passed) - rel is the release version, dbg is the debug build
+ccargs-rel = -Wall -Wextra -O3
+ccargs-dbg = -Wall -Werror -Wextra -O0 -g
+
+
+;; source file types; seperated by whitespaces (defaults to c)
+filetypes = c
+
+;; prefix for input/output file
+
+;; linker (defaults to `cc`)
+linker = cc
+;; TODO: use this
+lnargs-rel=
+lnargs-dbg=
+
+
+;;
+;; SCRIPTING (defaults to empty)
+;;
+
+[scripts]
+;; executed before the building begins - leave empty to disable
+prebuild =
+;; executed after the building begins - leave empty to disable
+postbuild =
+
+;; executed after the building of a file; gives the target object as $2 and the source file as $1 - leave empty to disable
+postprocess =
+;; executed before a file is built; source file is given as argument - leave empty to disable
+preprocess = 

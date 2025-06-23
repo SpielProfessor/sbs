@@ -1,0 +1,98 @@
+[
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-c",
+      "-O0",
+      "-g",
+      "-Wall",
+      "-Wextra",
+      "-o",
+      "main",
+      "src/main.c"
+    ],
+    "directory": "/home/vollmar/projects/c/sbs",
+    "file": "/home/vollmar/projects/c/sbs/src/main.c",
+    "output": "/home/vollmar/projects/c/sbs/main"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-c",
+      "-O0",
+      "-g",
+      "-Wall",
+      "-Wextra",
+      "-o",
+      "main",
+      "src/confparse.c"
+    ],
+    "directory": "/home/vollmar/projects/c/sbs",
+    "file": "/home/vollmar/projects/c/sbs/src/confparse.c",
+    "output": "/home/vollmar/projects/c/sbs/main"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-c",
+      "-O0",
+      "-g",
+      "-Wall",
+      "-Wextra",
+      "-o",
+      "main",
+      "src/dirdiscover.c"
+    ],
+    "directory": "/home/vollmar/projects/c/sbs",
+    "file": "/home/vollmar/projects/c/sbs/src/dirdiscover.c",
+    "output": "/home/vollmar/projects/c/sbs/main"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-c",
+      "-O0",
+      "-g",
+      "-Wall",
+      "-Wextra",
+      "-o",
+      "main",
+      "src/compile.c"
+    ],
+    "directory": "/home/vollmar/projects/c/sbs",
+    "file": "/home/vollmar/projects/c/sbs/src/compile.c",
+    "output": "/home/vollmar/projects/c/sbs/main"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-c",
+      "-O0",
+      "-g",
+      "-Wall",
+      "-Wextra",
+      "-o",
+      "main",
+      "src/link.c"
+    ],
+    "directory": "/home/vollmar/projects/c/sbs",
+    "file": "/home/vollmar/projects/c/sbs/src/link.c",
+    "output": "/home/vollmar/projects/c/sbs/main"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-c",
+      "-O0",
+      "-g",
+      "-Wall",
+      "-Wextra",
+      "-o",
+      "main",
+      "src/utils.c"
+    ],
+    "directory": "/home/vollmar/projects/c/sbs",
+    "file": "/home/vollmar/projects/c/sbs/src/utils.c",
+    "output": "/home/vollmar/projects/c/sbs/main"
+  }
+]
