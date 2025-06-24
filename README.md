@@ -26,16 +26,29 @@
 sbs --init myproject     # Create a new project
 cd myproject
 sbs --build --debug      # Build in debug mode
-sbs --run --release      # Run the release binary
+sbs --run --release      # Build and run the release binary
 ```
 
 ---
 
 ## 🔨 Compilation
 
-SBS currently requires a **GCC-compatible compiler** and a **Unix-like operating system**, and is built using a simple `Makefile`.  
-In future versions, SBS will be able to build itself using SBS.
+SBS currently requires a **GCC-compatible compiler** and a **Unix-like operating system**, and is built using either a simple `Makefile` or **SBS** itself.  
 
 SBS has only one dependency: [`inih`](https://github.com/benhoyt/inih), a minimal INI file parser.
 
 ---
+
+## 📦 Installation
+
+```bash
+git clone https://github.com/yourname/sbs
+cd sbs
+make
+cp --recursive main ~/.local/bin/sbs
+```
+
+---
+
+## 📖 Further Information
+See the help provided by SBS itself - just run `sbs --help`
