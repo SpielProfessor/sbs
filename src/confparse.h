@@ -12,6 +12,9 @@ typedef struct SbsConf {
   char *compiler;
   char *ccargs_rel;
   char *ccargs_dbg;
+  char *ldargs_dbg;
+  char *ldargs_rel;
+
   StrVec *filetypes;
   char *linker;
 
@@ -26,5 +29,6 @@ typedef struct SbsConf {
 SbsConf *sbsConfDefault();
 int parse_config(const char *filename, SbsConf **conf_out);
 void sbsFreeConf(SbsConf *conf);
+char *strVecLibSerialize(StrVec *vector);
 #define SBS_CONFIG_PARSE
 #endif

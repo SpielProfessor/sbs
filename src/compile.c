@@ -8,10 +8,10 @@
 #include <unistd.h>
 #define BINCMD "gcc" // or "clang", etc.
 
-#define COMPILE_S "%s "
-#define OUTPUT_S "%s "
-#define INPUT_S "%s "
-#define EXTRAPRAMS_S "%s "
+#define COMPILE_S " %s "
+#define OUTPUT_S " %s "
+#define INPUT_S " %s "
+#define EXTRAPRAMS_S " %s "
 int compileFile(const char *inputPath, const char *outputPath, int forceRebuild,
                 SbsConf *config, bool dbgmode) {
   int returnval = 0;
@@ -32,7 +32,7 @@ int compileFile(const char *inputPath, const char *outputPath, int forceRebuild,
   //
   // ERROR HANDLING
   //
-  if (r < -1) {
+  if (r == -1) {
     puts("Couldn't allocate path!");
     returnval = -1;
     goto compileFileReturn;

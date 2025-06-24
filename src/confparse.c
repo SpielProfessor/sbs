@@ -8,6 +8,9 @@ SbsConf *sbsConfDefault() {
   SbsConf *returned = malloc(sizeof(SbsConf));
   returned->ccargs_dbg = aar("");
   returned->ccargs_rel = aar("");
+  returned->ldargs_dbg = aar("");
+  returned->ldargs_rel = aar("");
+
   returned->compiler = aar("cc");
   returned->filetypes = strVecNew();
   returned->linker = aar("cc");
@@ -30,6 +33,8 @@ void sbsFreeConf(SbsConf *conf) {
   free(conf->compiler);
   free(conf->ccargs_rel);
   free(conf->ccargs_dbg);
+  free(conf->ldargs_rel);
+  free(conf->ldargs_dbg);
   delStrVec(conf->filetypes);
   free(conf->linker);
   delStrVec(conf->prebuild);
@@ -110,12 +115,22 @@ static int handler(void *user, const char *section, const char *name,
   } else if (strcmp(section, "compiler") == 0) {
     if (strcmp(name, "compiler") == 0) {
       assign_string(&conf->compiler, value);
+      // compilation args
     } else if (strcmp(name, "ccargs-rel") == 0 ||
                strcmp(name, "ccargs_rel") == 0) {
       assign_string(&conf->ccargs_rel, value);
     } else if (strcmp(name, "ccargs-dbg") == 0 ||
                strcmp(name, "ccargs_dbg") == 0) {
       assign_string(&conf->ccargs_dbg, value);
+      // linker args
+    } else if (strcmp(name, "ldargs-rel") == 0 ||
+               strcmp(name, "ldargs_rel") == 0) {
+      puts("reading rlink args");
+      assign_string(&conf->ldargs_rel, value);
+    } else if (strcmp(name, "ldargs-dbg") == 0 ||
+               strcmp(name, "ldargs_dbg") == 0) {
+      puts("reading dlink args");
+      assign_string(&conf->ldargs_dbg, value);
     } else if (strcmp(name, "filetypes") == 0) {
       assign_strvec(&conf->filetypes, value);
     } else if (strcmp(name, "linker") == 0) {
@@ -176,4 +191,28 @@ int parse_config(const char *filename, SbsConf **conf_out) {
 
   *conf_out = conf;
   return 0;
+}
+
+// returns a serialized library list (with -l)
+char *strVecLibSerialize(StrVec *inputs) {
+  char *returned = NULL;
+  int retLength = 0;
+
+  // get required length
+  for (StrVecElement *el = inputs->first; el != NULL; el = el->next) {
+    retLength += strlen(el->content) + 3; // +3 for " -l"
+  }
+  retLength++; // +1 for \0
+  // allocate
+  returned = malloc(retLength);
+  if (!returned) {
+    return NULL;
+  }
+  strcpy(returned, "");
+  // actually insert text
+  for (StrVecElement *el = inputs->first; el != NULL; el = el->next) {
+    strcat(returned, " -l");
+    strcat(returned, el->content);
+  }
+  return returned;
 }

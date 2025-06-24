@@ -166,7 +166,7 @@ void build(char *builddir, bool releaseMode, SbsConf *config) {
 
   StrVec *built = srcDiscover(bd, (const char *[]){".o", NULL});
   linkFiles(built, releaseMode ? "build/bin/release" : "build/bin/debug", 0,
-            config);
+            config, releaseMode);
   free(bd);
   delStrVec(built);
 

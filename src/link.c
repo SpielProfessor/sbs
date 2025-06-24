@@ -1,109 +1,123 @@
 #include "dirdiscover.h"
 #include "main.h"
+#include "utils.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <sys/stat.h>
 #include <sys/wait.h>
-#include <time.h>
 #include <unistd.h>
 
-// TODO: library
-
-#define BINCMD "gcc"
+#define LINKCMD "ld"
+#define COMPILE_S "%s"
+#define OUTPUT_S "%s"
+#define INPUT_S "%s"
+#define EXTRAPRAMS_S "%s"
+#define LIBRARIES "%s"
 
 // Forward declaration
 int createParentDirs(const char *path);
 
 // Get latest mtime among input files
-time_t latestInputTime(StrVec *inputs) {
-  time_t latest = 0;
+long latestInputTime(StrVec *inputs) {
+  long latest = 0;
   for (StrVecElement *el = inputs->first; el != NULL; el = el->next) {
-    struct stat st;
-    if (stat(el->content, &st) != 0) {
-      perror(el->content);
-      continue;
-    }
-    if (st.st_mtime > latest)
-      latest = st.st_mtime;
+    int modtime = getFileModTime(el->content);
+    if (modtime > latest)
+      latest = modtime;
   }
   return latest;
 }
 
-void linkFiles(StrVec *inputs, const char *outputPath, int forceRebuild,
-               SbsConf *config) {
-  // Check if rebuild is necessary
-  struct stat outStat;
-  int needsLinking = forceRebuild;
-
-  if (!needsLinking) {
-    if (stat(outputPath, &outStat) != 0) {
-      needsLinking = 1; // Output doesn't exist
-    } else {
-      time_t latest = latestInputTime(inputs);
-      if (latest > outStat.st_mtime)
-        needsLinking = 1;
-    }
+int linkFiles(StrVec *inputs, const char *outputPath, int forceRebuild,
+              SbsConf *config, bool releaseMode) {
+  // INITIALIZE VARIABLES
+  int retval = 0;
+  int cmdReturned = -1;
+  char *command = NULL;
+  char *normalizedOutput = pathNormalize(outputPath);
+  char *linker = NULL;
+  char *libraries = strVecLibSerialize(config->libraries);
+  if (!libraries) {
+    puts("ERROR: couldn't parse or allocate library string!");
+    goto sbsLinkFilesExit;
   }
-
-  if (!needsLinking) {
-    if (VERBOSE) {
-      printf("Skipping linking (up-to-date): %s\n", outputPath);
-    }
-    return;
-  }
-
-  if (createParentDirs(outputPath) != 0) {
-    fprintf(stderr, "Failed to create output directory for %s\n", outputPath);
-    return;
-  }
-
-  // Build args array dynamically
-  int count = 0;
-  for (StrVecElement *el = inputs->first; el != NULL; el = el->next)
-    count++;
-
-  // +3: compiler + "-o" + outputPath + NULL
-  char **args = malloc((count + 4) * sizeof(char *));
-  if (!args) {
-    perror("malloc");
-    return;
-  }
-
-  int i = 0;
-  args[i++] = BINCMD;
-  for (StrVecElement *el = inputs->first; el != NULL; el = el->next) {
-    args[i++] = el->content;
-  }
-  args[i++] = "-o";
-  args[i++] = (char *)outputPath;
-
-  args[i] = NULL;
-
-  pid_t pid = fork();
-  if (pid == -1) {
-    perror("fork");
-    free(args);
-    return;
-  }
-
-  if (pid == 0) {
-    execvp(BINCMD, args);
-    perror("exec failed");
-    exit(1);
-  }
-
-  int status;
-  if (waitpid(pid, &status, 0) == -1) {
-    perror("waitpid");
-    free(args);
-    return;
-  }
-
-  if (WIFEXITED(status) && WEXITSTATUS(status) == 0) {
-    printf("Linked %d files → %s\n", count, outputPath);
+  // switch to preferred linker
+  if (!config->compiler) {
+    linker = LINKCMD;
   } else {
-    fprintf(stderr, "Linking failed: %s\n", outputPath);
+    linker = config->compiler;
+  }
+  // serialized input files
+  char *inputFiles = NULL;
+  int inputLength = 0;
+  if (inputs->first == NULL) {
+    retval = -1;
+    puts("INFO: No files were found to link");
+    goto sbsLinkFilesExit;
+  }
+  // get required length
+  for (StrVecElement *el = inputs->first; el != NULL; el = el->next) {
+    inputLength += strlen(el->content) + 1; // +1 for following space
+  }
+  inputLength++; // +1 for \0
+  // allocate
+  inputFiles = malloc(inputLength);
+  if (!inputFiles) {
+    puts("Couldn't allocate input variables string!");
+    retval = -1;
+    goto sbsLinkFilesExit;
+  }
+  strcpy(inputFiles, "");
+  // actually insert text
+  for (StrVecElement *el = inputs->first; el != NULL; el = el->next) {
+    strcat(inputFiles, el->content);
+    strcat(inputFiles, " ");
   }
 
-  free(args);
+  // build command string
+  int r = asprintf(
+      &command,
+      COMPILE_S
+      " " INPUT_S /*INPUT_S should have a trailing space*/ "-o " OUTPUT_S
+      " " EXTRAPRAMS_S " " LIBRARIES,
+      linker, inputFiles, normalizedOutput,
+      releaseMode ? config->ldargs_rel : config->ldargs_dbg, libraries);
+  free(inputFiles); // serialized input files not needed
+  free(libraries);  // libraries neither
+  if (r < 0) {
+    puts("Couldn't allocate command string!");
+    retval = -1;
+    goto sbsLinkFilesExit;
+  }
+
+  // force-link files
+  if (forceRebuild) {
+    goto sbsLinkFiles;
+  }
+
+  // file date check
+  if (getFileModTime(outputPath) >= latestInputTime(inputs)) {
+    puts("Didn't link (up-to-date)");
+    goto sbsLinkFilesExit;
+  }
+
+  //
+  // CALL THE LINKER
+  //
+sbsLinkFiles:
+  puts("Linking files");
+  if (config->verbose) {
+    printf("calling %s\n", command);
+  }
+  cmdReturned = system(command);
+  if (cmdReturned != 0) {
+    puts("Failed to link files!");
+    goto sbsLinkFilesExit;
+  }
+  // CLEAN UP
+sbsLinkFilesExit:
+  free(command);
+  free(normalizedOutput);
+  return retval;
 }

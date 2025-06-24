@@ -17,8 +17,10 @@ version = 0.1
 ;;
 ;; LIBRARIES
 ;;
+
 [libraries]
 libraries = inih
+
 ;;
 ;; COMPILER INFORMATION
 ;;
@@ -29,7 +31,7 @@ compiler = gcc
 
 ;; arguments passed to the compiler (defaults to `-c`, which is always passed) - rel is the release version, dbg is the debug build
 ccargs-rel = -Wall -Wextra -O3
-ccargs-dbg = -Wall -Werror -Wextra -O0 -g
+ccargs-dbg = -Wall -Wextra -O0 -g
 
 
 ;; source file types; seperated by whitespaces (defaults to c)
