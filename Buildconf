@@ -27,7 +27,7 @@ libraries = inih
 
 [compiler]
 ;; compiler (defaults to `cc`); results in <compiler> <sourcefile> -o <output-file> <ccargs-rel/ccargs-dbg>
-compiler = gcc
+compiler =clang
 
 ;; arguments passed to the compiler (defaults to `-c`, which is always passed) - rel is the release version, dbg is the debug build
 ccargs-rel = -Wall -Wextra -O3
@@ -39,7 +39,7 @@ filetypes = c
 
 ;; prefix for input/output file
 
-;; linker (defaults to `cc`)
+;; linker (defaults to `ld`)
 linker = cc
 ;; TODO: use this
 lnargs-rel=
@@ -60,3 +60,6 @@ postbuild =
 postprocess =
 ;; executed before a file is built; source file is given as argument - leave empty to disable
 preprocess = 
+
+[sbsconf]
+verbose = true
