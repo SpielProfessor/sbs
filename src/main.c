@@ -131,7 +131,8 @@ void build(char *builddir, bool releaseMode, SbsConf *config) {
   // get path to source directory; get source files
   char *sourcedir = pathPush(builddir, SOURCEFOLDER);
   // TODO: use config
-  StrVec *sourcefiles = srcDiscover(sourcedir, (const char *[]){".c", NULL});
+  StrVec *sourcefiles = srcDiscover(
+      sourcedir, (const char *[]){".c", ".cpp", ".cc", ".cxx", NULL});
 
   StrVecElement *c = sourcefiles->first;
 
