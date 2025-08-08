@@ -103,6 +103,9 @@ int main(int argc, char **argv) {
     // execute
     char *executable = BUILDDIR "/" BINDIR "/";
     executable = strcatr(executable, releasemode ? "release" : "debug");
+    if (config->verbose) {
+      printf("executing %s\n", executable);
+    }
     system(executable);
     free(executable);
   }
