@@ -1,10 +1,10 @@
 #include "utils.h"
+#include "main.h"
 #include <libgen.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
-#include <sys/wait.h>
 #include <time.h>
 #include <unistd.h>
 
@@ -253,3 +253,30 @@ char **split_whitespace(const char *input) {
   result[count] = NULL;
   return result;
 }
+
+#ifndef _WIN32
+  // Linux/glibc has asprintf
+  #define _GNU_SOURCE
+  #include <stdio.h>
+#else
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdarg.h>
+int asprintf(char **strp, const char *fmt, ...) {
+  va_list args;
+  va_start(args, fmt);
+  int size = _vscprintf(fmt, args);
+  va_end(args);
+  if (size < 0) return -1;
+
+  *strp = malloc(size + 1);
+  if (!*strp) return -1;
+
+  va_start(args, fmt);
+  int r = vsnprintf(*strp, size + 1, fmt, args);
+  va_end(args);
+
+  return r;
+}
+#endif
+

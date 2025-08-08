@@ -50,7 +50,8 @@ void sbsFreeConf(SbsConf *conf) {
 // actual parsing
 
 #include <ctype.h>
-#include <ini.h>
+//#include <ini.h>
+#include "ini.h"
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>

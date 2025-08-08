@@ -1,4 +1,5 @@
 #include "dirdiscover.h"
+#include "main.h"
 #include <dirent.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -44,7 +45,7 @@ StrVec *srcDiscover(char *directory, const char **allowedExts) {
     }
     sprintf(full_path, "%s/%s", directory, entry->d_name);
 
-    if (entry->d_type == DT_DIR) {
+    if (IS_DIR(full_path) /*entry->d_type == DT_DIR*/) {
       // Recurse into subdirectory
       returned = mergeVecs(returned, srcDiscover(full_path, allowedExts));
       free(full_path);
