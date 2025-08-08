@@ -125,7 +125,8 @@ void build(char *builddir, bool releaseMode, SbsConf *config) {
          releaseMode ? "release" : "debug");
 
   // TODO: prebuild
-
+  system(config->prebuild);
+  printf("executed '%s' (prebuild)\n", config->prebuild);
   // initialize build directory structure
   mkbuilddir(builddir);
   // get path to source directory; get source files
@@ -149,11 +150,14 @@ void build(char *builddir, bool releaseMode, SbsConf *config) {
     free(nextpath);
     nextpath = tmp;
     // TODO: preprocess
-
+    system(config->preprocess);
+    printf("executed '%s' (preprocess)\n", config->preprocess);
     // TODO: maybe implement force-compile option
     compileFile(c->content, nextpath, 0, config, releaseMode);
 
     // TODO: post-process
+    system(config->postprocess);
+    printf("executed '%s' (posprocess)\n", config->postprocess);
     c = c->next;
     free(nextpath);
   }
@@ -172,6 +176,8 @@ void build(char *builddir, bool releaseMode, SbsConf *config) {
   delStrVec(built);
 
   // TODO: Postbuild
+  system(config->postbuild);
+  printf("executed '%s' (postbuild)\n", config->postbuild);
   // clean up
   free(sourcedir);
   delStrVec(sourcefiles);

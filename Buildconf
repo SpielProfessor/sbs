@@ -1,64 +1,67 @@
 ; vim: set filetype=ini:
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Build configuration for SBS ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Build configuration for SBS ;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-;;
-;; PROGRAM INFORMATION (required)
-;;
+;
+; PROGRAM INFORMATION (required)
+;
 
 [info]
-;; program name
+; program name
 name =    sbs
-;; version of the given application
+; version of the given application
 version = 0.1
 
-;;
-;; LIBRARIES
-;;
+;
+; LIBRARIES
+;
 
 [libraries]
 libraries = inih
 
-;;
-;; COMPILER INFORMATION
-;;
+;
+; COMPILER INFORMATION
+;
 
 [compiler]
-;; compiler (defaults to `cc`); results in <compiler> <sourcefile> -o <output-file> <ccargs-rel/ccargs-dbg>
+; compiler (defaults to `cc`); results in <compiler> <sourcefile> -o <output-file> <ccargs-rel/ccargs-dbg>
 compiler =clang
 
-;; arguments passed to the compiler (defaults to `-c`, which is always passed) - rel is the release version, dbg is the debug build
+; arguments passed to the compiler (defaults to `-c`, which is always passed) - rel is the release version, dbg is the debug build
 ccargs-rel = -Wall -Wextra -O3
 ccargs-dbg = -Wall -Wextra -O0 -g
 
 
-;; source file types; seperated by whitespaces (defaults to c)
+; source file types; seperated by whitespaces (defaults to c)
+; note that this doesn't work yet
 filetypes = c
 
-;; prefix for input/output file
+; prefix for input/output file
 
-;; linker (defaults to `ld`)
+; linker (defaults to `ld`)
 linker = cc
-;; TODO: use this
-lnargs-rel=
-lnargs-dbg=
+; TODO: use this
+ldargs-rel=
+ldargs-dbg=
+ldmode-ar=
 
 
-;;
-;; SCRIPTING (defaults to empty)
-;;
+;
+; SCRIPTING (defaults to empty)
+;
 
 [scripts]
-;; executed before the building begins - leave empty to disable
+; executed before the building begins - leave empty to disable
 prebuild =
-;; executed after the building begins - leave empty to disable
+; executed after the building begins - leave empty to disable
 postbuild =
 
-;; executed after the building of a file; gives the target object as $2 and the source file as $1 - leave empty to disable
+; executed after the building of a file; gives the target object as $2 and the source file as $1 - leave empty to disable
 postprocess =
-;; executed before a file is built; source file is given as argument - leave empty to disable
+; executed before a file is built; source file is given as argument - leave empty to disable
 preprocess = 
 
 [sbsconf]

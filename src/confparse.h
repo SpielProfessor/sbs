@@ -14,16 +14,17 @@ typedef struct SbsConf {
   char *ccargs_dbg;
   char *ldargs_dbg;
   char *ldargs_rel;
+  bool ldmode_ar;
 
   StrVec *filetypes;
   char *linker;
 
   // [scripts]
-  StrVec *prebuild;
-  StrVec *postbuild;
+  char *prebuild;
+  char *postbuild;
 
-  StrVec *postprocess;
-  StrVec *preprocess;
+  char *postprocess;
+  char *preprocess;
   bool verbose;
 } SbsConf;
 SbsConf *sbsConfDefault();

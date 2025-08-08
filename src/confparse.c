@@ -10,15 +10,16 @@ SbsConf *sbsConfDefault() {
   returned->ccargs_rel = aar("");
   returned->ldargs_dbg = aar("");
   returned->ldargs_rel = aar("");
+  returned->ldmode_ar  = false;
 
   returned->compiler = aar("cc");
   returned->filetypes = strVecNew();
   returned->linker = aar("cc");
   returned->name = NULL;
-  returned->postbuild = strVecNew();
-  returned->postprocess = strVecNew();
-  returned->prebuild = strVecNew();
-  returned->preprocess = strVecNew();
+  returned->postbuild = aar("");
+  returned->postprocess = aar("");
+  returned->prebuild = aar("");
+  returned->preprocess = aar("");
   returned->version = NULL;
   returned->verbose = false;
   returned->libraries = strVecNew();
@@ -37,10 +38,10 @@ void sbsFreeConf(SbsConf *conf) {
   free(conf->ldargs_dbg);
   delStrVec(conf->filetypes);
   free(conf->linker);
-  delStrVec(conf->prebuild);
-  delStrVec(conf->postbuild);
-  delStrVec(conf->postprocess);
-  delStrVec(conf->preprocess);
+  free(conf->prebuild);
+  free(conf->postbuild);
+  free(conf->postprocess);
+  free(conf->preprocess);
   delStrVec(conf->libraries);
 
   free(conf);
@@ -135,17 +136,19 @@ static int handler(void *user, const char *section, const char *name,
       assign_strvec(&conf->filetypes, value);
     } else if (strcmp(name, "linker") == 0) {
       assign_string(&conf->linker, value);
+    } else if (strcmp(name, "ldmode-ar")==0) {
+      conf->ldmode_ar=parse_bool(value);
     }
 
   } else if (strcmp(section, "scripts") == 0) {
     if (strcmp(name, "prebuild") == 0) {
-      assign_strvec(&conf->prebuild, value);
+      assign_string(&conf->prebuild, value);
     } else if (strcmp(name, "postbuild") == 0) {
-      assign_strvec(&conf->postbuild, value);
+      assign_string(&conf->postbuild, value);
     } else if (strcmp(name, "postprocess") == 0) {
-      assign_strvec(&conf->postprocess, value);
+      assign_string(&conf->postprocess, value);
     } else if (strcmp(name, "preprocess") == 0) {
-      assign_strvec(&conf->preprocess, value);
+      assign_string(&conf->preprocess, value);
     }
 
   } else if (strcmp(section, "sbsconf") == 0) {

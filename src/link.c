@@ -46,7 +46,7 @@ int linkFiles(StrVec *inputs, const char *outputPath, int forceRebuild,
   if (!config->compiler) {
     linker = LINKCMD;
   } else {
-    linker = config->compiler;
+    linker = config->linker;
   }
   // serialized input files
   char *inputFiles = NULL;
@@ -78,11 +78,12 @@ int linkFiles(StrVec *inputs, const char *outputPath, int forceRebuild,
   // build command string
   int r = asprintf(
       &command,
-      COMPILE_S
-      " " INPUT_S /*INPUT_S should have a trailing space*/ "-o " OUTPUT_S
-      " " EXTRAPRAMS_S " " LIBRARIES,
-      linker, inputFiles, normalizedOutput,
-      releaseMode ? config->ldargs_rel : config->ldargs_dbg, libraries);
+      EXTRAPRAMS_S " " COMPILE_S " %s " OUTPUT_S " " INPUT_S /*INPUT_S should have a trailing space*/ LIBRARIES,
+      linker, 
+      releaseMode ? config->ldargs_rel : config->ldargs_dbg,
+      /*output option*/ config->ldmode_ar ? "" : "-o", normalizedOutput,
+      inputFiles, 
+      config->ldmode_ar ? "" : libraries);
   free(inputFiles); // serialized input files not needed
   free(libraries);  // libraries neither
   if (r < 0) {
