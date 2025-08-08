@@ -17,6 +17,12 @@
 // #include <sys/stat.h>
 // #include <unistd.h>
 
+#ifdef _WIN32
+#define EXTENSION ".exe"
+#else
+#define EXTENSION ""
+#endif
+
 bool VERBOSE = true;
 
 //
@@ -44,6 +50,9 @@ int main(int argc, char **argv) {
          "    release-mode: either `--debug` (-d) or `--release` (-r) \n");
     printf("You are running SBS v.%s, compiled on %s at %s\n", VERSION,
            __DATE__, __TIME__);
+#ifdef _WIN32
+    printf("INFO: SBS on windows is still in alpha\n");
+#endif
     return 0;
   }
 
@@ -101,8 +110,13 @@ int main(int argc, char **argv) {
     }
     build(".", releasemode, config);
     // execute
+#ifdef _WIN32
+    char *executable = BUILDDIR "\\" BINDIR "\\";
+#else
     char *executable = BUILDDIR "/" BINDIR "/";
-    executable = strcatr(executable, releasemode ? "release" : "debug");
+#endif
+
+    executable = strcatr(executable, releasemode ? "release" EXTENSION : "debug" EXTENSION);
     if (config->verbose) {
       printf("executing %s\n", executable);
     }
